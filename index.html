@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>THE ADAPTATION EXPERIMENT</title>
+    <style>
+        /* SWISS STYLE RESET */
+        @font-face {
+            font-family: 'Nohemi-VF';
+            src: url('Nohemi-VF.ttf') format('truetype');
+        }
+        body { background: #FFFFFF; color: #000000; font-family: 'Nohemi-VF', 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 0; text-transform: uppercase; overflow: hidden; height: 100dvh; display: flex; align-items: center; justify-content: center; user-select: none; touch-action: manipulation; font-weight: normal; }
+        
+        .container { width: 90%; max-width: 450px; height: 95dvh; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; padding: 2vh 0; text-align: left; }
+        
+        /* HEADER S HIGHSCORE */
+        .header-row { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 4px solid #000000; padding-bottom: 1vh; margin-bottom: 2vh; }
+        h1 { font-size: 4vmin; font-weight: 900; letter-spacing: -1px; margin: 0; color: #0000FF; line-height: 1; }
+        .high-score-box { text-align: right; }
+        .hs-label { font-size: 2vmin; font-weight: normal; color: #000000; }
+        .hs-val { font-size: 3.5vmin; font-weight: 900; color: #0000FF; }
+
+        .section { display: flex; flex-direction: column; justify-content: center; width: 100%; border-bottom: 2px solid #E0E0E0; padding-bottom: 2vh; margin-bottom: 2vh; }
+        .section:last-child { border-bottom: none; }
+
+        .label { font-size: 2.5vmin; font-weight: normal; letter-spacing: 1px; color: #000000; margin-bottom: 0.5vh; }
+        .money { font-size: 13vmin; font-weight: 900; margin-bottom: 0; letter-spacing: -3px; color: #000000; line-height: 1; }
+
+        /* Bar - Modrá a Bílá */
+        .bar-wrap { width: 100%; height: 6vh; border: 3px solid #000000; position: relative; margin-bottom: 1vh; box-sizing: border-box; background: #FFFFFF; }
+        .bar-fill { height: 100%; width: 100%; background: #0000FF; transition: width 0.1s linear; }
+        .bar-text { position: absolute; width: 100%; top: 50%; left: 2vmin; transform: translateY(-50%); font-size: 3.5vmin; font-weight: 900; color: #FFFFFF; pointer-events: none; }
+
+        #msg { height: 3vh; font-size: 2.5vmin; font-weight: normal; letter-spacing: 1px; color: #0000FF; display: flex; align-items: center; margin-bottom: 1vh; }
+
+        /* Buttons & Inputs - Ostré hrany */
+        .btn { display: block; width: 100%; padding: 2.5vh 2vmin; font-family: inherit; font-size: 4vmin; font-weight: 900; cursor: pointer; border: none; background: #000000; color: #FFFFFF; transition: background 0.1s; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; text-align: left; }
+        .btn:active { background: #0000FF; color: #FFFFFF; }
+        
+        .id-val { font-size: 11vmin; font-weight: 900; letter-spacing: 2px; margin: 0 0 1vh; color: #0000FF; line-height: 1; }
+        
+        input { width: 100%; padding: 2vh 2vmin; font-family: inherit; font-size: 6vmin; text-align: left; border: 3px solid #000000; background: #FFFFFF; color: #000000; font-weight: normal; box-sizing: border-box; margin-bottom: 1.5vh; border-radius: 0; appearance: none; outline: none; }
+        input:focus { border-color: #0000FF; }
+
+        /* Záchranné tlačítko je vizuálně odlišené */
+        .btn-connect { background: #0000FF; color: #FFFFFF; }
+        .btn-connect:active { background: #000000; }
+
+        /* Overlay - Minimalistický šok */
+        .end { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: #0000FF; color: #FFFFFF; display: none; flex-direction: column; justify-content: center; align-items: flex-start; z-index: 100; padding: 10vw; box-sizing: border-box; }
+        .end h2 { font-size: 15vmin; font-weight: 900; margin: 0 0 1vh 0; letter-spacing: -3px; line-height: 1; color: #FFFFFF; }
+        .end p { font-size: 4vmin; font-weight: normal; margin: 0 0 4vh 0; color: #000000; }
+        .end .money { color: #FFFFFF; margin-bottom: 4vh; }
+        .end .label { color: #000000; }
+        .record-tag { font-size: 5vmin; color: #FFFFFF; font-weight: 900; margin-bottom: 3vh; display: none; padding: 1vh 2vw; display: inline-block; }
+        
+        .btn-reboot { background: #FFFFFF; color: #0000FF; text-align: center; max-width: 300px; }
+        .btn-reboot:active { background: #000000; color: #FFFFFF; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-row">
+        <h1>Confelicity</h1>
+        <div class="high-score-box">
+            <div class="hs-label">MAX ASSETS</div>
+            <div class="hs-val" id="hs-display">$ 0</div>
+        </div>
+    </div>
+
+    <div class="section" style="flex-grow: 1;">
+        <div class="label">CURRENT BALANCE</div>
+        <div class="money" id="m">$ 0</div>
+    </div>
+
+    <div class="section" style="flex-grow: 1;">
+        <div class="bar-wrap">
+            <div class="bar-fill" id="f"></div>
+            <div class="bar-text">MEANING</div>
+        </div>
+        
+        <div id="msg"></div>
+        <button class="btn" onclick="work()">ACQUIRE (+10K)</button>
+    </div>
+
+    <div class="section social" style="flex-grow: 1; border-bottom: none;">
+        <div class="label">YOUR UNIQUE ID</div>
+        <div class="id-val" id="myid">----</div>
+        
+        <div class="label">ENTER PARTNER ID</div>
+        <input type="number" id="in" placeholder="0000" inputmode="numeric" pattern="[0-9]*">
+        <button class="btn btn-connect" onclick="conn()">CONNECT & RESET</button>
+    </div>
+</div>
+
+<div id="over" class="end">
+    <h2>SYSTEM<br>FAILURE</h2>
+    <p>ADAPTATION OUTPACED MEANING.</p>
+    
+    <div class="label">FINAL BALANCE</div>
+    <div class="money" id="final-m">$ 0</div>
+    
+    <div id="record-msg" class="record-tag" style="display:none;">NEW RECORD</div>
+    
+    <button class="btn btn-reboot" onclick="location.reload()">REBOOT SYSTEM</button>
+</div>
+
+<script>
+    // --- HIGH SCORE LOGIKA ---
+    let highScore = localStorage.getItem('adaptationHighScore') || 0;
+    highScore = parseInt(highScore);
+    document.getElementById('hs-display').innerText = "$ " + highScore.toLocaleString();
+
+    let usedIDs = [];
+
+    // ANTI-CHEAT GENERÁTOR ID (Součet číslic končí na 7)
+    function genId() {
+        while(true) {
+            let n = Math.floor(1000 + Math.random() * 8999).toString();
+            let sum = n.split('').reduce((a, b) => parseInt(a) + parseInt(b), 0);
+            if(sum % 10 === 7) return n;
+        }
+    }
+
+    const myId = genId();
+    document.getElementById('myid').innerText = myId;
+
+    let money = 0, meaning = 100, decay = 0.2, finished = false;
+
+    // ČASOVAČ
+    const loop = setInterval(() => {
+        if (finished) return;
+        meaning -= decay;
+        document.getElementById('f').style.width = meaning + "%";
+        
+        if (meaning <= 0) {
+            finished = true;
+            endGame();
+        }
+    }, 100);
+
+    // KONEC HRY
+    function endGame() {
+        document.getElementById('final-m').innerText = "$ " + money.toLocaleString();
+        
+        if (money > highScore) {
+            highScore = money;
+            localStorage.setItem('adaptationHighScore', highScore);
+            document.getElementById('record-msg').style.display = 'inline-block'; 
+        }
+
+        document.getElementById('over').style.display = 'flex';
+    }
+
+    // KLIKÁNÍ ZA PENÍZE
+    function work() {
+        if (finished) return;
+        money += 10000;
+        decay *= 1.3; 
+        document.getElementById('m').innerText = "$ " + money.toLocaleString();
+    }
+
+    // POKUS O ZÁCHRANU
+    function conn() {
+        const val = document.getElementById('in').value;
+        
+        if (val === myId) { show("SELF-CONNECTION BLOCKED", "#FF0000"); return; }
+        
+        if (usedIDs.includes(val)) {
+            show("ID ALREADY USED", "#FF0000");
+            document.getElementById('in').value = ""; 
+            return;
+        }
+
+        let sum = val.split('').reduce((a, b) => parseInt(a) + parseInt(b), 0);
+        
+        // ANTI-CHEAT
+        if (val.length === 4 && sum % 10 === 7) {
+            meaning = 100;
+            decay = 0.2; 
+            usedIDs.push(val); 
+            
+            document.getElementById('in').value = "";
+            show("CONNECTION SUCCESSFUL", "#0000FF");
+            document.getElementById('in').blur(); 
+        } else {
+            show("INVALID ID", "#FF0000");
+        }
+    }
+
+    // ZPRÁVY
+    function show(t, color) {
+        let msgEl = document.getElementById('msg');
+        msgEl.innerText = t;
+        msgEl.style.color = color || "#0000FF";
+        setTimeout(() => msgEl.innerText = "", 2000);
+    }
+</script>
+</body>
+</html>
