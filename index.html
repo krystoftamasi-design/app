@@ -57,6 +57,32 @@
         
         .btn-reboot { background: #FFFFFF; color: #0000FF; text-align: center; max-width: 300px; }
         .btn-reboot:active { background: #000000; color: #FFFFFF; }
+    
+    /* Animace třesu (Panic Shake) */
+    @keyframes panicShake {
+        0% { transform: translate(1px, 1px) rotate(0deg); }
+        10% { transform: translate(-1px, -2px) rotate(-1deg); }
+        20% { transform: translate(-3px, 0px) rotate(1deg); }
+        30% { transform: translate(3px, 2px) rotate(0deg); }
+        40% { transform: translate(1px, -1px) rotate(1deg); }
+        50% { transform: translate(-1px, 2px) rotate(-1deg); }
+        60% { transform: translate(-3px, 1px) rotate(0deg); }
+        70% { transform: translate(3px, 1px) rotate(-1deg); }
+        80% { transform: translate(-1px, -1px) rotate(1deg); }
+        90% { transform: translate(1px, 2px) rotate(0deg); }
+        100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
+
+    /* Třída, kterou zapneme, když jde do tuhého */
+    .panic-mode {
+        animation: panicShake 0.5s infinite;
+        background-color: #FF0000 !important; /* Pozadí zčervená */
+        color: #FFFFFF !important;
+    }
+
+    /* Aby v panic módu zčernal bar */
+    .panic-mode .bar-fill { background: #000000; }
+    .panic-mode .label, .panic-mode .money, .panic-mode h1, .panic-mode .hs-label { color: #FFFFFF !important; }
     </style>
 </head>
 <body>
@@ -135,8 +161,19 @@
         meaning -= decay;
         document.getElementById('f').style.width = meaning + "%";
         
+        // --- VIZUÁLNÍ PANIKA PRO VŠECHNY (VČETNĚ iPHONE) ---
+        if (meaning < 20) {
+            document.body.classList.add('panic-mode');
+            // Zkusíme i vibrace (Android to sežere, iPhone to bude ignorovat)
+            if (navigator.vibrate) navigator.vibrate(50); 
+        } else {
+            document.body.classList.remove('panic-mode');
+        }
+        // ----------------------------------------------------
+        
         if (meaning <= 0) {
             finished = true;
+            document.body.classList.remove('panic-mode'); // Při smrti vypneme třes
             endGame();
         }
     }, 100);
