@@ -116,7 +116,7 @@
         <div class="id-val" id="myid">----</div>
         
         <div class="label">ENTER PARTNER ID</div>
-        <input type="number" id="in" placeholder="0000" inputmode="numeric" pattern="[0-9]*">
+        <input type="number" id="in" placeholder="00000" inputmode="numeric" pattern="[0-9]*">
         <button class="btn btn-connect" onclick="conn()">CONNECT & RESET</button>
     </div>
 </div>
@@ -141,10 +141,11 @@
 
     let usedIDs = [];
 
-    // ANTI-CHEAT GENERÁTOR ID (Součet číslic končí na 7)
+    // ANTI-CHEAT GENERÁTOR ID (Nyní 5místný!)
     function genId() {
         while(true) {
-            let n = Math.floor(1000 + Math.random() * 8999).toString();
+            // Generuje čísla od 10000 do 99999
+            let n = Math.floor(10000 + Math.random() * 89999).toString();
             let sum = n.split('').reduce((a, b) => parseInt(a) + parseInt(b), 0);
             if(sum % 10 === 7) return n;
         }
@@ -201,6 +202,8 @@
 
     // POKUS O ZÁCHRANU
     function conn() {
+        // ... (počáteční kontroly stejné)
+        
         const val = document.getElementById('in').value;
         
         if (val === myId) { show("SELF-CONNECTION BLOCKED", "#FF0000"); return; }
@@ -213,8 +216,8 @@
 
         let sum = val.split('').reduce((a, b) => parseInt(a) + parseInt(b), 0);
         
-        // ANTI-CHEAT
-        if (val.length === 4 && sum % 10 === 7) {
+        // ANTI-CHEAT KONTROLA (Změněno na val.length === 5)
+        if (val.length === 5 && sum % 10 === 7) {
             meaning = 100;
             decay = 0.2; 
             usedIDs.push(val); 
@@ -223,7 +226,12 @@
             show("CONNECTION SUCCESSFUL", "#0000FF");
             document.getElementById('in').blur(); 
         } else {
-            show("INVALID ID", "#FF0000");
+            // KILL THE USER
+            finished = true;
+            document.body.classList.remove('panic-mode');
+            endGame();
+            document.getElementById('record-msg').innerText = "wrong id dead";
+            document.getElementById('record-msg').style.display = 'inline-block';
         }
     }
 
