@@ -53,6 +53,7 @@
             font-size: 2vmin;
             font-weight: normal;
             margin-bottom: 2.5vh;
+            padding: 0 20px;
         }
 
         .money {
@@ -217,6 +218,7 @@
 
         .id-section {
             padding-left: 20px;
+            margin-top: 6vh;
         }
 
         /* ID SECTION */
@@ -353,13 +355,15 @@
 
         <div class="conn-container">
             <button class="btn" id="conn-btn" onclick="activateConn()">CONECT</button>
-            <input type="text" id="conn-input" placeholder="ENTER ID" autocomplete="off" spellcheck="false" style="text-transform: uppercase;" onkeydown="if(event.key==='Enter') conn()">
+            <input type="text" id="conn-input" placeholder="ENTER ID" autocomplete="off" spellcheck="false"
+                style="text-transform: uppercase;" onkeydown="if(event.key==='Enter') conn()">
         </div>
     </div>
 
     <div id="over" class="end">
         <h2>SYSTEM FAILURE</h2>
-        <div id="death-reason" style="font-size: 5vmin; margin-top: 2vh; color: #FF0000; font-family: 'Nohemi-VF', sans-serif;"></div>
+        <div id="death-reason"
+            style="font-size: 5vmin; margin-top: 2vh; color: #FF0000; font-family: 'Nohemi-VF', sans-serif;"></div>
         <div class="money" id="final-m">0 $</div>
         <button class="btn btn-reboot" onclick="location.reload()">REBOOT</button>
     </div>
@@ -416,7 +420,7 @@
             } else {
                 reasonText = "REASON: UNKNOWN FATAL ERROR";
             }
-            
+
             document.getElementById('death-reason').innerText = reasonText;
             document.getElementById('final-m').innerText = money.toLocaleString() + " $";
             if (money > highScore) {
@@ -434,6 +438,8 @@
                 document.getElementById('m').innerText = money.toLocaleString() + " $";
                 generateTask();
             } else {
+                money = Math.max(0, money - 10000);
+                document.getElementById('m').innerText = money.toLocaleString() + " $";
                 const wrap = document.getElementById('task-wrap');
                 const originalBg = wrap.style.background;
                 wrap.style.background = '#000000';
@@ -488,7 +494,7 @@
                 // COLOR A.B.C
                 const targetColor = COLORS[Math.floor(Math.random() * COLORS.length)];
                 const isMatch = Math.random() < 0.5;
-                
+
                 let squareColor;
                 if (isMatch) {
                     squareColor = targetColor;
