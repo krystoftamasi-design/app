@@ -1,247 +1,596 @@
 <!DOCTYPE html>
 <html lang="cs">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>THE ADAPTATION EXPERIMENT</title>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>CONFELICITY</title>
     <style>
-        /* SWISS STYLE RESET */
+        /* PILL DESIGN SYSTEM */
         @font-face {
             font-family: 'Nohemi-VF';
             src: url('Nohemi-VF.ttf') format('truetype');
         }
-        body { background: #FFFFFF; color: #000000; font-family: 'Nohemi-VF', 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 0; text-transform: uppercase; overflow: hidden; height: 100dvh; display: flex; align-items: center; justify-content: center; user-select: none; touch-action: manipulation; font-weight: normal; }
-        
-        .container { width: 90%; max-width: 450px; height: 95dvh; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; padding: 2vh 0; text-align: left; }
-        
-        /* HEADER S HIGHSCORE */
-        .header-row { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 4px solid #000000; padding-bottom: 1vh; margin-bottom: 2vh; }
-        h1 { font-size: 4vmin; font-weight: 900; letter-spacing: 1px; margin: 0; color: #0000FF; line-height: 1; }
-        .high-score-box { text-align: right; }
-        .hs-label { font-size: 2vmin; font-weight: normal; color: #000000; }
-        .hs-val { font-size: 3.5vmin; font-weight: 900; letter-spacing: 1px; color: #0000FF; }
 
-        .section { display: flex; flex-direction: column; justify-content: center; width: 100%; border-bottom: 2px solid #E0E0E0; padding-bottom: 2vh; margin-bottom: 2vh; }
-        .section:last-child { border-bottom: none; }
+        body {
+            background: #E5E5E5;
+            color: #000000;
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-transform: uppercase;
+            overflow: hidden;
+            height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            touch-action: manipulation;
+            font-weight: normal;
+        }
 
-        .label { font-size: 2.5vmin; font-weight: normal; letter-spacing: 1px; color: #000000; margin-bottom: 0.5vh; }
-        .money { font-size: 13vmin; font-weight: 900; margin-bottom: 0; letter-spacing: 1px; color: #000000; line-height: 1; }
+        .container {
+            width: calc(100% - 80px);
+            max-width: 450px;
+            height: 92dvh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+            padding: 2vh 0;
+        }
 
-        /* Bar - Modrá a Bílá */
-        .bar-wrap { width: 100%; height: 6vh; border: 3px solid #000000; position: relative; margin-bottom: 1vh; box-sizing: border-box; background: #FFFFFF; }
-        .bar-fill { height: 100%; width: 100%; background: #0000FF; transition: width 0.1s linear; }
-        .bar-text { position: absolute; width: 100%; top: 50%; left: 2vmin; transform: translateY(-50%); font-size: 3.5vmin; font-weight: 900; color: #FFFFFF; pointer-events: none; }
+        .header {
+            margin-top: -3vh;
+        }
 
-        #msg { height: 3vh; font-size: 2.5vmin; font-weight: normal; letter-spacing: 1px; color: #0000FF; display: flex; align-items: center; margin-bottom: 1vh; }
 
-        /* Buttons & Inputs - Ostré hrany */
-        .btn { display: block; width: 100%; padding: 2.5vh 2vmin; font-family: inherit; font-size: 4vmin; font-weight: 900; cursor: pointer; border: none; background: #000000; color: #FFFFFF; transition: background 0.1s; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; text-align: left; }
-        .btn:active { background: #0000FF; color: #FFFFFF; }
-        
-        .id-val { font-size: 11vmin; font-weight: 900; letter-spacing: 3px; margin: 0 0 1vh; color: #0000FF; line-height: 1; }
-        
-        input { width: 100%; padding: 2vh 2vmin; font-family: inherit; font-size: 6vmin; text-align: left; border: 3px solid #000000; background: #FFFFFF; color: #000000; font-weight: normal; box-sizing: border-box; margin-bottom: 1.5vh; border-radius: 0; appearance: none; outline: none; }
-        input:focus { border-color: #0000FF; }
+        /* HEADER */
+        .hs-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 2vmin;
+            font-weight: normal;
+            margin-bottom: 2.5vh;
+        }
 
-        /* Záchranné tlačítko je vizuálně odlišené */
-        .btn-connect { background: #0000FF; color: #FFFFFF; }
-        .btn-connect:active { background: #000000; }
+        .money {
+            font-family: 'Nohemi-VF', sans-serif;
+            font-size: 10vmin;
+            font-weight: normal;
+            line-height: 1;
+            letter-spacing: -2px;
+            margin-bottom: 2vh;
+            margin-top: 1vh;
+        }
 
-        /* Overlay - Minimalistický šok */
-        .end { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: #0000FF; color: #FFFFFF; display: none; flex-direction: column; justify-content: center; align-items: flex-start; z-index: 100; padding: 10vw; box-sizing: border-box; }
-        .end h2 { font-size: 15vmin; font-weight: 900; margin: 0 0 1vh 0; letter-spacing: 2px; line-height: 1; color: #FFFFFF; }
-        .end p { font-size: 4vmin; font-weight: normal; margin: 0 0 4vh 0; color: #000000; }
-        .end .money { color: #FFFFFF; margin-bottom: 4vh; }
-        .end .label { color: #000000; }
-        .record-tag { font-size: 5vmin; color: #FFFFFF; font-weight: 900; margin-bottom: 3vh; display: none; padding: 1vh 2vw; display: inline-block; }
-        
-        .btn-reboot { background: #FFFFFF; color: #0000FF; text-align: center; max-width: 300px; }
-        .btn-reboot:active { background: #000000; color: #FFFFFF; }
-    
-    /* Animace třesu (Panic Shake) */
-    @keyframes panicShake {
-        0% { transform: translate(1px, 1px) rotate(0deg); }
-        10% { transform: translate(-1px, -2px) rotate(-1deg); }
-        20% { transform: translate(-3px, 0px) rotate(1deg); }
-        30% { transform: translate(3px, 2px) rotate(0deg); }
-        40% { transform: translate(1px, -1px) rotate(1deg); }
-        50% { transform: translate(-1px, 2px) rotate(-1deg); }
-        60% { transform: translate(-3px, 1px) rotate(0deg); }
-        70% { transform: translate(3px, 1px) rotate(-1deg); }
-        80% { transform: translate(-1px, -1px) rotate(1deg); }
-        90% { transform: translate(1px, 2px) rotate(0deg); }
-        100% { transform: translate(1px, -2px) rotate(-1deg); }
-    }
+        /* MEANING BAR (WHITE BG, BLACK FILL REVEALS WHITE) */
+        .bar-wrap {
+            width: 100%;
+            height: 22dvh;
+            background: #FFFFFF;
+            position: relative;
+            border-radius: 40px;
+            overflow: hidden;
+            margin-bottom: 2vh;
+        }
 
-    /* Třída, kterou zapneme, když jde do tuhého */
-    .panic-mode {
-        animation: panicShake 0.5s infinite;
-        background-color: #FF0000 !important; /* Pozadí zčervená */
-        color: #FFFFFF !important;
-    }
+        .bar-fill {
+            height: 100%;
+            width: 100%;
+            background: #000000;
+            transition: width 0.1s linear;
+            position: absolute;
+            left: 0;
+            top: 0;
+            border-radius: 40px;
+        }
 
-    /* Aby v panic módu zčernal bar */
-    .panic-mode .bar-fill { background: #000000; }
-    .panic-mode .label, .panic-mode .money, .panic-mode h1, .panic-mode .hs-label { color: #FFFFFF !important; }
+        .bar-label {
+            position: absolute;
+            top: 3vh;
+            left: 3vh;
+            color: #FFFFFF;
+            font-size: 2.5vmin;
+            font-weight: normal;
+            z-index: 2;
+        }
+
+        /* TASK AREA */
+        .task-wrap {
+            background: #FFFFFF;
+            border-radius: 40px;
+            padding: 4vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 25dvh;
+            color: #000000;
+            margin-bottom: 2vh;
+            box-sizing: border-box;
+            transition: background 0.3s;
+        }
+
+        .task-title {
+            font-family: 'Nohemi-VF', sans-serif;
+            font-size: 4vmin;
+            font-weight: normal;
+            margin-bottom: 3vh;
+            text-align: left;
+            line-height: 1.2;
+            width: 100%;
+        }
+
+        .task-row {
+            display: flex;
+            gap: 1.5vh;
+            flex-wrap: nowrap;
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* PILL ELEMENTS */
+        .btn {
+            background: #000000;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 999px;
+            padding: 2vh 4vh;
+            font-family: inherit;
+            font-size: 3.5vmin;
+            font-weight: normal;
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.1s;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn-sq {
+            border-radius: 25px;
+            flex: 1;
+            height: 12vh;
+            text-transform: uppercase;
+        }
+
+        .btn-oval {
+            border-radius: 999px;
+            width: 8vh;
+            height: 14vh;
+            font-size: 4vmin;
+        }
+
+        .math-input-wrap {
+            position: relative;
+            width: 100%;
+        }
+
+        .math-prefix {
+            position: absolute;
+            left: 3vh;
+            top: 50%;
+            transform: translateY(-50%);
+            font-family: 'Nohemi-VF', sans-serif;
+            font-size: 5vmin;
+            color: #FFFFFF;
+            pointer-events: none;
+        }
+
+        .task-input-pill {
+            background: #000000;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 999px;
+            padding: 2vh 4vh 2vh 7vh;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: 'Nohemi-VF', sans-serif;
+            font-size: 5vmin;
+            outline: none;
+            text-align: left;
+        }
+
+        .task-input {
+            background: #FFFFFF;
+            color: #000000;
+            border: none;
+            border-radius: 999px;
+            padding: 1.8vh 4vh;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 5vmin;
+            font-weight: normal;
+            margin-bottom: 1.5vh;
+            outline: none;
+            text-align: center;
+        }
+
+        /* ID SECTION */
+        .id-label {
+            font-size: 2vmin;
+            font-weight: normal;
+            color: #000000;
+            margin-bottom: 0.2vh;
+        }
+
+        .id-val {
+            font-family: 'Nohemi-VF', sans-serif;
+            font-size: 8vmin;
+            font-weight: normal;
+            color: #000000;
+            line-height: 1;
+            margin-bottom: 2vh;
+        }
+
+        /* CONECT PILL TRANSFORMATION */
+        .conn-container {
+            width: 100%;
+        }
+
+        #conn-btn {
+            width: 100%;
+            padding: 2.5vh 5vh;
+            justify-content: flex-start;
+        }
+
+        #conn-input {
+            display: none;
+            background: #000000;
+            color: #FFFFFF;
+            width: 100%;
+            border: none;
+            border-radius: 999px;
+            padding: 2.5vh 5vh;
+            font-family: inherit;
+            font-size: 4vmin;
+            font-weight: normal;
+            text-align: center;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        /* OVERLAY */
+        .end {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100dvh;
+            background: #FFFFFF;
+            color: #000000;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            z-index: 100;
+            padding: 10vw;
+            box-sizing: border-box;
+        }
+
+        .end h2 {
+            font-size: 15vmin;
+            font-weight: normal;
+            margin: 0;
+            line-height: 0.9;
+        }
+
+        .end .money {
+            color: #000000;
+            margin: 4vh 0;
+            font-size: 12vmin;
+        }
+
+        .btn-reboot {
+            background: #000000;
+            color: #FFFFFF;
+            font-size: 5vmin;
+            padding: 3vh 8vh;
+        }
+
+        /* PANIC SHAKE */
+        @keyframes panic {
+            0% {
+                transform: translate(1px, 1px);
+            }
+
+            50% {
+                transform: translate(-1px, -1px);
+            }
+
+            100% {
+                transform: translate(1px, 1px);
+            }
+        }
+
+        .panic-mode {
+            animation: panic 0.05s infinite;
+        }
+
+        .panic-mode .bar-fill {
+            background: #FF0000 !important;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <div class="header-row">
-        <h1>Confelicity</h1>
-        <div class="high-score-box">
-            <div class="hs-label">MAX ASSETS</div>
-            <div class="hs-val" id="hs-display">$ 0</div>
+    <div class="container">
+        <div class="header">
+            <div class="hs-row">
+                <span>MAX</span>
+                <span id="hs-display">0 $</span>
+            </div>
+            <div class="money" id="m">0 $</div>
         </div>
-    </div>
 
-    <div class="section" style="flex-grow: 1;">
-        <div class="label">CURRENT BALANCE</div>
-        <div class="money" id="m">$ 0</div>
-    </div>
-
-    <div class="section" style="flex-grow: 1;">
         <div class="bar-wrap">
+            <div class="bar-label">MEANING</div>
             <div class="bar-fill" id="f"></div>
-            <div class="bar-text">MEANING</div>
         </div>
-        
-        <div id="msg"></div>
-        <button class="btn" onclick="work()">ACQUIRE (+10K)</button>
+
+        <div class="task-wrap" id="task-wrap">
+            <div id="task-content"></div>
+        </div>
+
+        <div class="id-section">
+            <div class="id-label">ID</div>
+            <div class="id-val" id="myid">-----</div>
+        </div>
+
+        <div class="conn-container">
+            <button class="btn" id="conn-btn" onclick="activateConn()">CONECT</button>
+            <input type="text" id="conn-input" placeholder="ENTER ID" autocomplete="off" spellcheck="false" style="text-transform: uppercase;" onkeydown="if(event.key==='Enter') conn()">
+        </div>
     </div>
 
-    <div class="section social" style="flex-grow: 1; border-bottom: none;">
-        <div class="label">YOUR UNIQUE ID</div>
-        <div class="id-val" id="myid">----</div>
-        
-        <div class="label">ENTER PARTNER ID</div>
-        <input type="number" id="in" placeholder="00000" inputmode="numeric" pattern="[0-9]*">
-        <button class="btn btn-connect" onclick="conn()">CONNECT & RESET</button>
+    <div id="over" class="end">
+        <h2>SYSTEM FAILURE</h2>
+        <div id="death-reason" style="font-size: 5vmin; margin-top: 2vh; color: #FF0000; font-family: 'Nohemi-VF', sans-serif;"></div>
+        <div class="money" id="final-m">0 $</div>
+        <button class="btn btn-reboot" onclick="location.reload()">REBOOT</button>
     </div>
-</div>
 
-<div id="over" class="end">
-    <h2>SYSTEM<br>FAILURE</h2>
-    <p>ADAPTATION OUTPACED MEANING.</p>
-    
-    <div class="label">FINAL BALANCE</div>
-    <div class="money" id="final-m">$ 0</div>
-    
-    <div id="record-msg" class="record-tag" style="display:none;">NEW RECORD</div>
-    
-    <button class="btn btn-reboot" onclick="location.reload()">REBOOT SYSTEM</button>
-</div>
+    <script>
+        const WORDS = ["HEDONIA", "TREADMILL", "VOID", "STATUS", "GRIND", "HUSTLE", "RATRACE", "CAGE", "BURNOUT", "ASSETS", "PROFIT", "MARGIN", "DIVIDEND", "EQUITY", "YIELD", "NUMB", "HOLLOW", "ABYSS", "DECAY", "STRESS", "FATIGUE", "DRAIN", "MIRAGE", "ILLUSION", "FACADE", "VANITY", "GREED", "CHASE", "CYCLE", "LOOP", "WHEEL", "QUOTA", "METRIC", "TARGET", "BONUS", "SALARY", "WAGE", "LABOR", "SLAVE", "MASTER", "DEBT", "LOAN", "CREDIT", "TAX", "COST", "PRICE", "VALUE", "WORTH", "GOLD", "IRON", "SILVER", "BULL", "BEAR", "CRASH", "BUBBLE", "PEAK", "SLUMP", "PANIC", "MANIA", "CRAZE", "TREND", "HYPE", "FEAR", "RISK", "LOSS", "GAIN", "BINGE", "PURGE", "CONSUME", "WASTE", "TRASH", "LUXURY", "EXCESS", "HOARD", "STASH", "VAULT", "SAFE", "LOCK", "BLIND", "DEAF", "MUTE", "COLD", "HARD", "DEAD", "GHOST", "SHADOW", "ECHO", "NULL", "ZERO", "EMPTY", "BLANK", "FLAW", "FAULT", "ERROR", "GLITCH", "BUG", "TRAP", "SNARE", "BAIT"];
 
-<script>
-    // --- HIGH SCORE LOGIKA ---
-    let highScore = localStorage.getItem('adaptationHighScore') || 0;
-    highScore = parseInt(highScore);
-    document.getElementById('hs-display').innerText = "$ " + highScore.toLocaleString();
+        let highScore = localStorage.getItem('adaptationHighScore') || 0;
+        highScore = parseInt(highScore);
+        document.getElementById('hs-display').innerText = highScore.toLocaleString() + " $";
 
-    let usedIDs = [];
+        let usedIDs = [];
 
-    // ANTI-CHEAT GENERÁTOR ID (Nyní 5místný!)
-    function genId() {
-        while(true) {
-            // Generuje čísla od 10000 do 99999
-            let n = Math.floor(10000 + Math.random() * 89999).toString();
-            let sum = n.split('').reduce((a, b) => parseInt(a) + parseInt(b), 0);
-            if(sum % 10 === 7) return n;
-        }
-    }
-
-    const myId = genId();
-    document.getElementById('myid').innerText = myId;
-
-    let money = 0, meaning = 100, decay = 0.2, finished = false;
-
-    // ČASOVAČ
-    const loop = setInterval(() => {
-        if (finished) return;
-        meaning -= decay;
-        document.getElementById('f').style.width = meaning + "%";
-        
-        // --- VIZUÁLNÍ PANIKA PRO VŠECHNY (VČETNĚ iPHONE) ---
-        if (meaning < 20) {
-            document.body.classList.add('panic-mode');
-            // Zkusíme i vibrace (Android to sežere, iPhone to bude ignorovat)
-            if (navigator.vibrate) navigator.vibrate(50); 
-        } else {
-            document.body.classList.remove('panic-mode');
-        }
-        // ----------------------------------------------------
-        
-        if (meaning <= 0) {
-            finished = true;
-            document.body.classList.remove('panic-mode'); // Při smrti vypneme třes
-            endGame();
-        }
-    }, 100);
-
-    // KONEC HRY
-    function endGame() {
-        document.getElementById('final-m').innerText = "$ " + money.toLocaleString();
-        
-        if (money > highScore) {
-            highScore = money;
-            localStorage.setItem('adaptationHighScore', highScore);
-            document.getElementById('record-msg').style.display = 'inline-block'; 
+        function genId() {
+            const word = WORDS[Math.floor(Math.random() * WORDS.length)];
+            const x = Math.floor(Math.random() * 10);
+            const y = Math.floor(Math.random() * 10);
+            const z = (word.length + x + y) % 10;
+            return `${word} ${x}${y}${z}`;
         }
 
-        document.getElementById('over').style.display = 'flex';
-    }
+        const myId = genId();
+        document.getElementById('myid').innerText = myId;
 
-    // KLIKÁNÍ ZA PENÍZE
-    function work() {
-        if (finished) return;
-        money += 10000;
-        decay *= 1.3; 
-        document.getElementById('m').innerText = "$ " + money.toLocaleString();
-    }
+        let money = 0, meaning = 100, decay = 0.2, finished = false;
 
-    // POKUS O ZÁCHRANU
-    function conn() {
-        // ... (počáteční kontroly stejné)
-        
-        const val = document.getElementById('in').value;
-        
-        if (val === myId) { show("SELF-CONNECTION BLOCKED", "#FF0000"); return; }
-        
-        if (usedIDs.includes(val)) {
-            show("ID ALREADY USED", "#FF0000");
-            document.getElementById('in').value = ""; 
-            return;
-        }
+        const loop = setInterval(() => {
+            if (finished) return;
+            meaning -= decay;
+            document.getElementById('f').style.width = meaning + "%";
 
-        let sum = val.split('').reduce((a, b) => parseInt(a) + parseInt(b), 0);
-        
-        // ANTI-CHEAT KONTROLA (Změněno na val.length === 5)
-        if (val.length === 5 && sum % 10 === 7) {
-            meaning = 100;
-            decay = 0.2; 
-            usedIDs.push(val); 
+            if (meaning < 20) {
+                document.body.classList.add('panic-mode');
+            } else {
+                document.body.classList.remove('panic-mode');
+            }
+
+            if (meaning <= 0) {
+                finished = true;
+                endGame("TIMEOUT");
+            }
+        }, 100);
+
+        function endGame(reasonType) {
+            let reasonText = "";
+            if (reasonType === "TIMEOUT") {
+                reasonText = "REASON: MEANING DEPLETED";
+            } else if (reasonType === "OWN_ID") {
+                reasonText = "REASON: CONNECTING TO SELF IS FORBIDDEN";
+            } else if (reasonType === "USED_ID") {
+                reasonText = "REASON: ID ALREADY USED";
+            } else if (reasonType === "INVALID_ID") {
+                reasonText = "REASON: INVALID OR CORRUPT ID";
+            } else {
+                reasonText = "REASON: UNKNOWN FATAL ERROR";
+            }
             
-            document.getElementById('in').value = "";
-            show("CONNECTION SUCCESSFUL", "#0000FF");
-            document.getElementById('in').blur(); 
-        } else {
-            // KILL THE USER
-            finished = true;
-            document.body.classList.remove('panic-mode');
-            endGame();
-            document.getElementById('record-msg').innerText = "wrong id dead";
-            document.getElementById('record-msg').style.display = 'inline-block';
+            document.getElementById('death-reason').innerText = reasonText;
+            document.getElementById('final-m').innerText = money.toLocaleString() + " $";
+            if (money > highScore) {
+                highScore = money;
+                localStorage.setItem('adaptationHighScore', highScore);
+            }
+            document.getElementById('over').style.display = 'flex';
         }
-    }
 
-    // ZPRÁVY
-    function show(t, color) {
-        let msgEl = document.getElementById('msg');
-        msgEl.innerText = t;
-        msgEl.style.color = color || "#0000FF";
-        setTimeout(() => msgEl.innerText = "", 2000);
-    }
-</script>
+        function checkTask(success) {
+            if (finished) return;
+            if (success) {
+                money += 10000;
+                decay *= 1.15;
+                document.getElementById('m').innerText = money.toLocaleString() + " $";
+                generateTask();
+            } else {
+                const wrap = document.getElementById('task-wrap');
+                const originalBg = wrap.style.background;
+                wrap.style.background = '#000000';
+                setTimeout(() => wrap.style.background = originalBg, 150);
+            }
+        }
+
+        function getContrastYIQ(hexcolor) {
+            hexcolor = hexcolor.replace("#", "");
+            let r = parseInt(hexcolor.substr(0, 2), 16);
+            let g = parseInt(hexcolor.substr(2, 2), 16);
+            let b = parseInt(hexcolor.substr(4, 2), 16);
+            let yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+            return (yiq >= 128) ? 'black' : 'white';
+        }
+
+        const COLORS = [
+            { name: "red", hex: "#FF0000" },
+            { name: "green", hex: "#00FF00" },
+            { name: "blue", hex: "#0000FF" },
+            { name: "yellow", hex: "#FFFF00" },
+            { name: "pink", hex: "#FF00FF" },
+            { name: "cyan", hex: "#00FFFF" }
+        ];
+
+        function generateTask() {
+            if (finished) return;
+            const taskIdx = Math.floor(Math.random() * 3);
+            const c = document.getElementById('task-content');
+            const wrap = document.getElementById('task-wrap');
+            let html = '';
+
+            if (taskIdx === 0) {
+                // TAP ON COLOR
+                const colorA = COLORS[Math.floor(Math.random() * COLORS.length)];
+                let colorB = COLORS[Math.floor(Math.random() * COLORS.length)];
+                while (colorB.hex === colorA.hex) colorB = COLORS[Math.floor(Math.random() * COLORS.length)];
+
+                const textColor = getContrastYIQ(colorA.hex);
+                wrap.style.background = colorA.hex;
+                wrap.style.color = textColor;
+
+                const swap = Math.random() > 0.5;
+                const btn1 = `<button class="btn btn-sq" onclick="checkTask(false)">${colorA.name.toUpperCase()}</button>`;
+                const btn2 = `<button class="btn btn-sq" onclick="checkTask(true)">${colorB.name.toUpperCase()}</button>`;
+
+                html = `<div class="task-title" style="color:${textColor}">TAP ON ${colorB.name.toUpperCase()}</div>
+                    <div class="task-row">
+                        ${swap ? btn1 + btn2 : btn2 + btn1}
+                    </div>`;
+            } else if (taskIdx === 1) {
+                // COLOR A.B.C
+                const targetColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+                const isMatch = Math.random() < 0.5;
+                
+                let squareColor;
+                if (isMatch) {
+                    squareColor = targetColor;
+                } else {
+                    let otherColors = COLORS.filter(c => c.hex !== targetColor.hex);
+                    squareColor = otherColors[Math.floor(Math.random() * otherColors.length)];
+                }
+
+                const textColor = getContrastYIQ(squareColor.hex);
+                wrap.style.background = squareColor.hex;
+                wrap.style.color = textColor;
+
+                const btns = ['A', 'B', 'C'];
+                const pBtns = [...btns].sort(() => Math.random() - 0.5);
+                const tapIfTrue = pBtns[0];
+                const tapIfFalse = pBtns[1];
+                const correctBtn = isMatch ? tapIfTrue : tapIfFalse;
+
+                html = `<div class="task-title" style="color:${textColor}">IF SQUARE IS ${targetColor.name.toUpperCase()}, TAP ${tapIfTrue}, ELSE ${tapIfFalse}.</div>
+                    <div class="task-row" style="justify-content: space-evenly;">
+                        <button class="btn btn-oval" onclick="checkTask(${correctBtn === 'A'})">A</button>
+                        <button class="btn btn-oval" onclick="checkTask(${correctBtn === 'B'})">B</button>
+                        <button class="btn btn-oval" onclick="checkTask(${correctBtn === 'C'})">C</button>
+                    </div>`;
+            } else if (taskIdx === 2) {
+                // COUNT (IMMEDIATE)
+                wrap.style.background = "#FFFFFF";
+                wrap.style.color = "#000000";
+
+                const a = Math.floor(Math.random() * 30) + 5;
+                const b = Math.floor(Math.random() * 30) + 5;
+                const res = a + b;
+
+                html = `<div class="task-title" style="color:#000000">COUNT ${a}+${b}</div>
+                    <div class="math-input-wrap">
+                        <div class="math-prefix">=</div>
+                        <input type="number" id="t-inp" class="task-input-pill" autofocus inputmode="numeric" 
+                               oninput="if(this.value == ${res}) { this.value=''; checkTask(true); }">
+                    </div>`;
+            }
+            c.innerHTML = html;
+            const inp = document.getElementById('t-inp');
+            if (inp) inp.focus();
+        }
+
+        function activateConn() {
+            document.getElementById('conn-btn').style.display = 'none';
+            const inp = document.getElementById('conn-input');
+            inp.style.display = 'block';
+            inp.focus();
+        }
+
+        function conn() {
+            const rawInput = document.getElementById('conn-input').value.toUpperCase();
+            const valClean = rawInput.replace(/\s+/g, ''); // Ignore all spaces
+            if (!valClean) return;
+
+            // Split into word and checksum
+            if (valClean.length < 4) {
+                endGame("INVALID_ID");
+                return;
+            }
+
+            const numStr = valClean.slice(-3);
+            const word = valClean.slice(0, -3);
+
+            if (!WORDS.includes(word)) {
+                endGame("INVALID_ID");
+                return;
+            }
+
+            const myIdClean = myId.replace(/\s+/g, '');
+            if (valClean === myIdClean) {
+                endGame("OWN_ID");
+                return;
+            }
+
+            if (usedIDs.includes(valClean)) {
+                endGame("USED_ID");
+                return;
+            }
+
+            if (numStr.length !== 3 || !/^\d{3}$/.test(numStr)) {
+                endGame("INVALID_ID");
+                return;
+            }
+
+            const x = parseInt(numStr[0]);
+            const y = parseInt(numStr[1]);
+            const z = parseInt(numStr[2]);
+
+            // Validate checksum
+            if ((word.length + x + y) % 10 !== z) {
+                endGame("INVALID_ID");
+                return;
+            }
+
+            meaning = 100;
+            usedIDs.push(valClean);
+            document.getElementById('conn-input').value = "";
+            document.getElementById('conn-input').style.display = 'none';
+            document.getElementById('conn-btn').style.display = 'block';
+            generateTask();
+        }
+
+        generateTask();
+    </script>
 </body>
+
 </html>
